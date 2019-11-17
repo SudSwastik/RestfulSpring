@@ -1,25 +1,25 @@
 package com.sudarshan.RestfulSpring.controller;
-import com.sudarshan.RestfulSpring.models.Customer;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
+import com.sudarshan.RestfulSpring.models.Customer;
+import com.sudarshan.RestfulSpring.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1")
 public class CustomerController {
 
-    @GetMapping("/customers")
-    public List<Customer> getAllCustomers(){
-        Customer c1 = new Customer();
-        c1.setId(1);
-        c1.setName("sud");
+    @Autowired
+    private CustomerRepository repo;
 
-        Customer c2 = new Customer();
-        c2.setId(2);
-        c2.setName("sud1");
-        return Arrays.asList(c1,c2);
+    @GetMapping("/customers")
+    public Iterable<Customer> getAllCustomers(
+            @RequestParam(name="_page", defaultValue = "1") Integer pageNum,
+            @RequestParam(name="_limit", defaultValue = "10")  Integer pageSize){
+        Pageable p = PageRequest.of(pageNum-1, pageSize);
+        return repo.findAll(p).getContent();
     }
 }
