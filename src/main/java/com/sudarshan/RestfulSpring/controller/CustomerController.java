@@ -5,6 +5,7 @@ import com.sudarshan.RestfulSpring.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,6 +15,21 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository repo;
+
+    @PostMapping
+    public ResponseEntity<?> addNewCustomer(@RequestBody Customer customer){
+        repo.save(customer);
+        return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCustomerById(@PathVariable Integer id){
+         try{
+             return ResponseEntity.ok(repo.findById(id));
+        }catch(Exception e){
+             return ResponseEntity.status(404).body(null);
+        }
+    }
 
     @GetMapping("/customers")
     public Iterable<Customer> getAllCustomers(
